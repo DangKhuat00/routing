@@ -14,17 +14,22 @@ class LSrouter(Router):
     """Link state routing protocol implementation."""
 
     def __init__(self, addr, heartbeat_time):
-        Router.__init__(self, addr)  # Initialize base class - DO NOT REMOVE
+        Router.__init__(self, addr)  
+
         self.heartbeat_time = heartbeat_time
+    #  Khoảng thời gian giữa các lần phát thông tin trạng thái liên kết (link state) đến các router lân cận.
         self.last_time = 0
-
-        self.ports = {}  # endpoint -> port
-        self.neighbors = {}  # endpoint -> cost
-        self.link_state_db = {}  # router -> (seq, {neighbor: cost})
+    #  Thời điểm lần cuối cùng phát thông tin trạng thái liên kết.
+        self.ports = {}  # endpoint -> port  Bản đồ ánh xạ endpoint (địa chỉ router lân cận) với cổng kết nối (port).
+        self.neighbors = {}  # endpoint -> cost Bản đồ ánh xạ endpoint với chi phí liên kết (cost)
+        self.link_state_db = {}  # router -> (seq, {neighbor: cost}) 
+    # Cơ sở dữ liệu trạng thái liên kết, lưu thông tin về các router và các liên kết của chúng. Dạng dữ liệu:
         self.seq_nums = {}  # router -> seq
+    #  Lưu số thứ tự (sequence number) của các router để đảm bảo không xử lý lại các gói tin cũ.
         self.forwarding_table = {}  # dest -> port
+    # Bảng định tuyến, ánh xạ đích (destination) với cổng (port) để gửi gói tin.
         self.seq = 0  # sequence number of this router
-
+    # Số thứ tự của router hiện tại, tăng mỗi khi có thay đổi liên kết.
     def handle_packet(self, port, packet):
         """Process incoming packet."""
         if packet.is_traceroute:
